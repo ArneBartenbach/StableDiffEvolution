@@ -14,7 +14,7 @@ pipe = StableDiffusionImg2ImgPipeline.from_pretrained(model_path, torch_dtype=to
     device
 )
 pipe = pipe.to(device)
-pipe.enable_attention_slicing()
+pipe.enable_attention_slicing() #nur für vram optimierung
 
 prompt = ["The inner neurological mind, intricate precise clear detail"]
 negative_prompt = ["face, person, blurry"]

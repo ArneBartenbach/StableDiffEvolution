@@ -6,7 +6,7 @@ import util
 from os import makedirs
 import numpy as np
 
-init_img_path = "./evolution/microorg_52874/selected/19.png"
+init_img_path = "./home/arne/masterArbeit/StableDiffEvolution/evolution/microorg_52874/selected/19.png"
 prompt = "a beautiful evolved microorganism, 8k photograph"
 proj_name = "microorg"
 seed = 52874
@@ -53,7 +53,7 @@ util.disableNSFWFilter(im2im)
 cur = init_img
 for i in range(evolution_steps):
     with autocast("cuda"):
-        images = im2im(prompt=prompt, image=cur, strength=0.7, num_inference_steps=100, generator=generator).images
+        images = im2im(prompt=prompt, init_image=cur, strength=0.7, num_inference_steps=100, generator=generator).images
     image = util.image_grid(images, 1, pop_size)
     image.save(proj_path+'/cur_pop.png')
     selection = int(input("Select 1-4: "))

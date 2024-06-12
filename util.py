@@ -17,7 +17,7 @@ def disableNSFWFilter(pipe):
     """Disables the trigger happy nsfw filter. tread carefully"""
     def dummy(images, **kwargs):
         return images, False
-    pipe.safety_checker = dummy
+    pipe.safety_checker = None
 
 
 def slerp(t, v0, v1, DOT_THRESHOLD=0.9995):

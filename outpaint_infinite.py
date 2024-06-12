@@ -96,7 +96,7 @@ while True:
         ).images
         im_grid = util.image_grid(ims, 1, num_options)
         im_grid.save(proj_dir+'/_choice.png')
-        choice = input("Frame "+str(i)+" finished. Choose [1-4] or reroll[enter]: ")
+        choice = input("Frame "+str(i)+" finished. Choose [1-4] or reroll[enter] or quit[q]: ")
         if choice == "q":
             break
         if choice.isdigit():
