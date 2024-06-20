@@ -6,14 +6,14 @@ import util
 from os import makedirs
 import numpy as np
 
-init_img_path = "./evolution/microorg_52874/selected/19.png"
-prompt = "a beautiful evolved microorganism, 8k photograph"
-proj_name = "microorg"
-seed = 52874
+init_img_path = "D:/Uni/Master/Masterarbeit/Implementierung/StableDiffEvolution/breed/defaultprojectName_0/0.png"
+prompt = "A photorealistic 8k image of a beautiful Roboter"
+proj_name = "saveAndRead"
+seed = 0
 
 pop_size = 4
-evolution_steps = 20
-select_every = 5
+evolution_steps = 100
+select_every = 5#unused
 height = 512
 width = 512
 
@@ -43,22 +43,31 @@ else:
 init_img.save(proj_path+'/_origin.png')
 
 prompt = [prompt]*pop_size
-
-im2im = StableDiffusionImg2ImgPipeline.from_pretrained(
-    model_path,
-    use_auth_token=True
-).to(device)
-util.disableNSFWFilter(im2im)
-
+negative_prompt = ["ugly, art, blurry, artefacts, abstract"]*pop_size
 cur = init_img
+
 for i in range(evolution_steps):
+
+    im2im = StableDiffusionImg2ImgPipeline.from_pretrained(
+        model_path,
+        use_auth_token=True,
+        torch_dtype=torch.float16
+    ).to(device)
+    util.disableNSFWFilter(im2im)
+
     with autocast("cuda"):
-        images = im2im(prompt=prompt, image=cur, strength=0.7, num_inference_steps=100, generator=generator).images
+        images = im2im(image=cur, prompt=prompt, negative_prompt=negative_prompt, num_inference_steps=50, strength=0.2, guidance_scale=7, width=width, height=height, generator=generator).images
     image = util.image_grid(images, 1, pop_size)
     image.save(proj_path+'/cur_pop.png')
-    selection = int(input("Select 1-4: "))
+    selection = 1#int(input("Select 1-4: "))
     assert selection >= 1 and selection <= 4
     cur = images[selection-1]
     image.save('{}/{}_{}.png'.format(proj_path, str(i), selection))
     cur.save('{}/selected/{}.png'.format(proj_path, str(i)))
+    cur = Image.open('{}/selected/{}.png'.format(proj_path, str(i))).convert('RGB')
+    cur = cur.resize((width, height))
+
+    torch.cuda.empty_cache()
+
+
 
